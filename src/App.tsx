@@ -1,6 +1,11 @@
 
 import { useEffect } from "react"
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom"
 
 import Home from "./pages/Home"
 import Inventory from "./pages/Inventory"
@@ -10,6 +15,32 @@ import Admin from "./pages/Admin"
 import Navbar from "./components/Navbar"
 
 import { supabase } from "./lib/supabase"
+
+function AppContent() {
+  const location = useLocation()
+  const isAdminPage = location.pathname === "/admin"
+
+  return (
+    <>
+      {!isAdminPage && <Navbar />}
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+
+        <Route path="/inventory" element={<Inventory />} />
+
+        <Route
+          path="/vehicle/:slug"
+          element={<VehicleDetails />}
+        />
+
+        <Route path="/login" element={<Login />} />
+
+        <Route path="/admin" element={<Admin />} />
+      </Routes>
+    </>
+  )
+}
 
 function App() {
   useEffect(() => {
@@ -27,27 +58,12 @@ function App() {
       console.log("HavanaDealer conectado a Supabase correctamente")
     }
 
-    testConnection()
+    void testConnection()
   }, [])
 
   return (
     <BrowserRouter>
-      <Navbar />
-
-      <Routes>
-        <Route path="/" element={<Home />} />
-
-        <Route path="/inventory" element={<Inventory />} />
-
-        <Route
-          path="/vehicle/:slug"
-          element={<VehicleDetails />}
-        />
-
-        <Route path="/login" element={<Login />} />
-
-        <Route path="/admin" element={<Admin />} />
-      </Routes>
+      <AppContent />
     </BrowserRouter>
   )
 }

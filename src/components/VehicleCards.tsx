@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { supabase } from "../lib/supabase"
@@ -19,9 +20,44 @@ type Vehicle = {
   mileage: number | null
   mileage_unit: string
   fuel_type: string | null
+  transmission: string | null
   body_type: string | null
+  color: string | null
   province: string
+  municipality: string | null
   description: string | null
+
+  // Motor y rendimiento
+  engine_displacement_cc: number | null
+  power_hp: number | null
+  torque_nm: number | null
+  drive_type: string | null
+  fuel_consumption: number | null
+  fuel_consumption_unit: string | null
+
+  // Batería y carga
+  battery_capacity_kwh: number | null
+  electric_range_km: number | null
+  charging_power_kw: number | null
+  charging_time_minutes: number | null
+  plug_type: string | null
+
+  // Dimensiones y capacidad
+  doors: number | null
+  seats: number | null
+  trunk_capacity_liters: number | null
+
+  // Estado y documentación
+  exterior_color: string | null
+  interior_color: string | null
+  vehicle_condition: string | null
+  warranty: string | null
+  ownership_count: number | null
+  registration_status: string | null
+
+  // Equipamiento
+  features: string[] | null
+
   vehicle_images: {
     image_url: string
     is_cover: boolean
@@ -66,9 +102,33 @@ function VehicleCards({
           mileage,
           mileage_unit,
           fuel_type,
+          transmission,
           body_type,
+          color,
           province,
+          municipality,
           description,
+          engine_displacement_cc,
+          power_hp,
+          torque_nm,
+          drive_type,
+          fuel_consumption,
+          fuel_consumption_unit,
+          battery_capacity_kwh,
+          electric_range_km,
+          charging_power_kw,
+          charging_time_minutes,
+          plug_type,
+          doors,
+          seats,
+          trunk_capacity_liters,
+          exterior_color,
+          interior_color,
+          vehicle_condition,
+          warranty,
+          ownership_count,
+          registration_status,
+          features,
           vehicle_images (
             image_url,
             is_cover,
@@ -85,7 +145,7 @@ function VehicleCards({
         setError("No pudimos cargar los vehículos. Inténtalo de nuevo.")
         setVehicles([])
       } else {
-        setVehicles((data ?? []) as Vehicle[])
+        setVehicles((data ?? []) as unknown as Vehicle[])
       }
 
       setLoading(false)
@@ -174,6 +234,13 @@ function VehicleCards({
                     src={image}
                     alt={title}
                     loading="lazy"
+                    onError={(event) => {
+                      const element = event.currentTarget
+
+                      if (!element.src.endsWith("/preview.jpg")) {
+                        element.src = "/preview.jpg"
+                      }
+                    }}
                   />
 
                   <div className="vehicle-info">
