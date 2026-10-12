@@ -1,0 +1,292 @@
+.vehicle-details-page {
+  min-height: 100vh;
+  padding: 32px 24px 70px;
+  background: var(--background);
+}
+
+.vehicle-details-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* BOTON VOLVER */
+
+.vehicle-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 26px;
+  padding: 10px 0;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.vehicle-back-button:hover {
+  color: var(--primary);
+}
+
+/* DISTRIBUCION PRINCIPAL */
+
+.vehicle-details-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.85fr);
+  align-items: start;
+  gap: 32px;
+}
+
+.vehicle-gallery {
+  min-width: 0;
+}
+
+/* IMAGEN */
+
+.vehicle-main-image {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--background-soft);
+}
+
+.vehicle-main-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vehicle-hybrid-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #166534;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.vehicle-image-caption {
+  margin: 12px 0 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+/* INFORMACION DEL AUTO */
+
+.vehicle-summary {
+  padding: 25px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.04);
+}
+
+.vehicle-summary-brand {
+  display: block;
+  margin-bottom: 9px;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.vehicle-summary h1 {
+  margin: 0;
+  color: var(--text);
+  font-size: 30px;
+  line-height: 1.2;
+  letter-spacing: -0.8px;
+}
+
+.vehicle-summary-subtitle {
+  margin: 10px 0 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.vehicle-summary-price {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 24px;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.vehicle-summary-price span {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.vehicle-summary-price strong {
+  color: var(--primary);
+  font-size: 32px;
+  font-weight: 800;
+}
+
+/* ESPECIFICACIONES */
+
+.vehicle-specifications {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 14px;
+  margin: 24px 0;
+}
+
+.vehicle-specifications > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  color: var(--primary);
+}
+
+.vehicle-specifications > div > span {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.vehicle-specifications small {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.vehicle-specifications strong {
+  color: var(--text);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+/* CONTACTO */
+
+.vehicle-contact-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 13px 16px;
+  border: 1px solid var(--primary);
+  border-radius: 9px;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+
+.vehicle-contact-button:hover {
+  border-color: var(--primary-hover);
+  background: var(--primary-hover);
+}
+
+.vehicle-contact-note {
+  margin: 12px 0 0;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* EQUIPAMIENTO */
+
+.vehicle-features-section {
+  margin-top: 60px;
+}
+
+.vehicle-section-heading {
+  margin-bottom: 26px;
+}
+
+.vehicle-section-heading > span {
+  display: block;
+  margin-bottom: 9px;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+}
+
+.vehicle-section-heading h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: 28px;
+  line-height: 1.3;
+}
+
+.vehicle-section-heading p {
+  margin: 10px 0 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.vehicle-features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.vehicle-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+}
+
+.vehicle-feature-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--background-soft);
+  color: var(--primary);
+}
+
+.vehicle-feature h3 {
+  margin: 2px 0 6px;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.vehicle-feature p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.vehicle-disclaimer {
+  margin: 24px 0 0;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+/* TABLE
