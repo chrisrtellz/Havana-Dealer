@@ -144,3 +144,39 @@
     grid-column: auto;
   }
 }
+
+@media (max-width: 700px) {
+  footer {
+    padding-top: 24px;
+    padding-bottom: 12px;
+  }
+
+  footer h2,
+  footer h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 15px;
+  }
+
+  footer p {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  footer a {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  footer ul {
+    margin-top: 6px;
+    margin-bottom: 12px;
+    padding-left: 0;
+  }
+
+  footer li {
+    margin-bottom: 5px;
+  }
+}

@@ -1,4 +1,6 @@
-import { useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link, useParams } from "react-router-dom"
+
 import {
   ArrowLeft,
   Gauge,
@@ -17,99 +19,261 @@ import {
   Check,
 } from "lucide-react"
 
+import { supabase } from "../lib/supabase"
 import "./VehicleDetails.css"
 
+type Vehicle = {
+  id: string
+  brand: string
+  model: string
+  version: string | null
+  year: number
+  price_usd: number
+  mileage: number | null
+  mileage_unit: string
+  fuel_type: string | null
+  transmission: string | null
+  body_type: string | null
+  color: string | null
+  province: string
+  description: string | null
+  contact_phone: string
+  vehicle_images: {
+    image_url: string
+    is_cover: boolean
+    display_order: number
+  }[]
+}
+
 function VehicleDetails() {
-  const navigate = useNavigate()
+  const { slug } = useParams()
+  const [vehicle, setVehicle] = useState<Vehicle | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+
+  useEffect(() => {
+    let active = true
+
+    async function loadVehicle() {
+      setLoading(true)
+      setError("")
+
+      // El identificador del vehículo es el último bloque de la URL.
+      const vehicleId = slug?.match(
+      /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+      )?.[0]
+
+      if (!vehicleId) {
+        if (active) {
+          setError("No encontramos este vehículo.")
+          setLoading(false)
+        }
+        return
+      }
+
+      const { data, error } = await supabase
+        .from("vehicles")
+        .select(`
+          id,
+          brand,
+          model,
+          version,
+          year,
+          price_usd,
+          mileage,
+          mileage_unit,
+          fuel_type,
+          transmission,
+          body_type,
+          color,
+          province,
+          description,
+          contact_phone,
+          vehicle_images (
+            image_url,
+            is_cover,
+            display_order
+          )
+        `)
+        .eq("id", vehicleId)
+        .eq("status", "published")
+        .maybeSingle()
+
+      if (!active) return
+
+      if (error) {
+        console.error("Error cargando el vehículo:", error.message)
+        setError("No pudimos cargar los datos del vehículo.")
+        setVehicle(null)
+      } else if (!data) {
+        setError("Este vehículo no existe o ya no está publicado.")
+        setVehicle(null)
+      } else {
+        setVehicle(data as Vehicle)
+      }
+
+      setLoading(false)
+    }
+
+    loadVehicle()
+
+    return () => {
+      active = false
+    }
+  }, [slug])
 
   const features = [
     {
       icon: Armchair,
-      title: "Asientos de cuero premium",
-      description: "Interior elegante y confortable",
+      title: "Interior",
+      description: "Consulta el estado y el equipamiento con el vendedor.",
     },
     {
       icon: Sun,
-      title: "Techo panorámico",
-      description: "Mayor luminosidad en el interior",
+      title: "Confort",
+      description: "Confirma qué elementos de confort incluye.",
     },
     {
       icon: Lightbulb,
-      title: "Luces LED",
-      description: "Iluminación moderna",
+      title: "Iluminación",
+      description: "Consulta el tipo de iluminación instalado.",
     },
     {
       icon: Monitor,
-      title: "Pantalla multimedia",
-      description: "Bluetooth, Apple CarPlay y Android Auto",
+      title: "Multimedia",
+      description: "Confirma las funciones multimedia disponibles.",
     },
     {
       icon: Camera,
-      title: "Cámara y sensores",
-      description: "Asistencia durante el estacionamiento",
+      title: "Estacionamiento",
+      description: "Pregunta si incluye cámara o sensores.",
     },
     {
       icon: ShieldCheck,
-      title: "Seguridad avanzada",
-      description: "Sistemas de asistencia al conductor",
+      title: "Seguridad",
+      description: "Verifica los sistemas de seguridad del vehículo.",
     },
     {
       icon: KeyRound,
-      title: "Acceso inteligente",
-      description: "Encendido por botón",
+      title: "Acceso",
+      description: "Consulta las características de acceso y encendido.",
     },
     {
       icon: BriefcaseBusiness,
-      title: "Maletero amplio",
-      description: "Asientos traseros abatibles",
+      title: "Espacio",
+      description: "Comprueba la capacidad y el espacio de carga.",
     },
   ]
+
+  if (loading) {
+    return (
+      <main className="vehicle-details-page">
+        <div className="vehicle-details-container">
+          <p>Cargando vehículo...</p>
+        </div>
+      </main>
+    )
+  }
+
+  if (!vehicle || error) {
+    return (
+      <main className="vehicle-details-page">
+        <div className="vehicle-details-container">
+          <h1>Vehículo no encontrado</h1>
+          <p>{error || "No encontramos este vehículo en el inventario."}</p>
+
+          <Link
+            className="vehicle-back-button"
+            to="/inventory"
+          >
+            <ArrowLeft size={18} />
+            Volver al inventario
+          </Link>
+        </div>
+      </main>
+    )
+  }
+
+  const images = [...(vehicle.vehicle_images ?? [])].sort(
+    (a, b) =>
+      Number(b.is_cover) - Number(a.is_cover) ||
+      a.display_order - b.display_order
+  )
+
+  const image = images[0]?.image_url || "/preview.jpg"
+  const title = `${vehicle.brand} ${vehicle.model}${
+    vehicle.version ? ` ${vehicle.version}` : ""
+  }`
+
+  const price = vehicle.price_usd.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 2,
+  })
+
+  const whatsappMessage =
+    `Hola, estoy interesado en el ${title}. ` +
+    `Precio publicado: ${price}. ¿Podrías darme más información?`
+
+  const phone = vehicle.contact_phone.replace(/\D/g, "")
+
+  const whatsappUrl = phone
+    ? `https://wa.me/${phone}?text=${encodeURIComponent(whatsappMessage)}`
+    : `https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`
+
+  const specifications = [
+    vehicle.fuel_type,
+    vehicle.transmission,
+    vehicle.color,
+    vehicle.body_type,
+  ].filter(Boolean)
 
   return (
     <main className="vehicle-details-page">
       <div className="vehicle-details-container">
-        <button
+        <Link
           className="vehicle-back-button"
-          onClick={() => navigate(-1)}
-          type="button"
+          to="/inventory"
         >
           <ArrowLeft size={18} />
-          Volver a los vehículos
-        </button>
+          Volver al inventario
+        </Link>
 
         <div className="vehicle-details-layout">
           <section className="vehicle-gallery">
             <div className="vehicle-main-image">
-              <img
-                src="/hyundai-santa-fe-negro.jpg"
-                alt="Hyundai Santa Fe Calligraphy Hybrid 2022 negro"
-              />
+              <img src={image} alt={title} />
 
-              <span className="vehicle-hybrid-badge">
-                <Check size={15} />
-                Híbrido
-              </span>
+              {vehicle.fuel_type?.toLowerCase().includes("híbrido") && (
+                <span className="vehicle-hybrid-badge">
+                  <Check size={15} />
+                  Híbrido
+                </span>
+              )}
             </div>
 
             <p className="vehicle-image-caption">
-              Hyundai Santa Fe Calligraphy · Exterior negro
+              {title} · {vehicle.year}
             </p>
           </section>
 
           <aside className="vehicle-summary">
             <span className="vehicle-summary-brand">
-              HYUNDAI
+              {vehicle.brand.toUpperCase()}
             </span>
 
-            <h1>Santa Fe Calligraphy</h1>
+            <h1>
+              {vehicle.model}
+              {vehicle.version ? ` ${vehicle.version}` : ""}
+            </h1>
 
             <p className="vehicle-summary-subtitle">
-              Híbrido · Edición Calligraphy
+              {vehicle.body_type || "Vehículo en venta"}
             </p>
 
             <div className="vehicle-summary-price">
               <span>Precio de venta</span>
-              <strong>34.000 USD</strong>
+              <strong>{price}</strong>
             </div>
 
             <div className="vehicle-specifications">
@@ -117,7 +281,7 @@ function VehicleDetails() {
                 <CalendarDays size={19} />
                 <span>
                   <small>Año</small>
-                  <strong>2022</strong>
+                  <strong>{vehicle.year}</strong>
                 </span>
               </div>
 
@@ -125,30 +289,38 @@ function VehicleDetails() {
                 <Gauge size={19} />
                 <span>
                   <small>Recorrido</small>
-                  <strong>62.000 millas</strong>
+                  <strong>
+                    {vehicle.mileage !== null
+                      ? `${vehicle.mileage.toLocaleString("es-ES")} ${vehicle.mileage_unit}`
+                      : "No indicado"}
+                  </strong>
                 </span>
               </div>
 
               <div>
                 <Fuel size={19} />
                 <span>
-                  <small>Motor indicado</small>
-                  <strong>2.0 híbrido</strong>
+                  <small>Combustible</small>
+                  <strong>{vehicle.fuel_type || "No indicado"}</strong>
                 </span>
               </div>
 
               <div>
                 <Users size={19} />
                 <span>
-                  <small>Capacidad</small>
-                  <strong>5 pasajeros</strong>
+                  <small>Ubicación</small>
+                  <strong>{vehicle.province}</strong>
                 </span>
               </div>
             </div>
 
+            {specifications.length > 0 && (
+              <p>{specifications.join(" · ")}</p>
+            )}
+
             <a
               className="vehicle-contact-button"
-              href="https://wa.me/528335053883"
+              href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -157,7 +329,7 @@ function VehicleDetails() {
             </a>
 
             <p className="vehicle-contact-note">
-              Contacta para consultar disponibilidad y más información.
+              Contacta al vendedor para consultar disponibilidad y más información.
             </p>
           </aside>
         </div>
@@ -167,7 +339,8 @@ function VehicleDetails() {
             <span>DETALLES DEL VEHÍCULO</span>
             <h2>Equipamiento y características</h2>
             <p>
-              Comodidad, tecnología y funcionalidad para cada viaje.
+              {vehicle.description ||
+                "Contacta al vendedor para conocer más detalles de este vehículo."}
             </p>
           </div>
 
@@ -194,8 +367,7 @@ function VehicleDetails() {
           </div>
 
           <p className="vehicle-disclaimer">
-            Confirma las especificaciones exactas del motor y el
-            equipamiento con el vendedor antes de la compra.
+            Confirma las especificaciones exactas con el vendedor antes de la compra.
           </p>
         </section>
       </div>
