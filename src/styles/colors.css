@@ -1,0 +1,14 @@
+:root {
+  --primary: #1e40af;
+  --primary-hover: #1e3a8a;
+
+  --background: #ffffff;
+  --background-soft: #f8fafc;
+
+  --text: #111827;
+  --text-secondary: #64748b;
+
+  --border: #e2e8f0;
+
+  --card: #ffffff;
+}
