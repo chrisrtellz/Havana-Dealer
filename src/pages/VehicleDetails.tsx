@@ -9,11 +9,7 @@ import {
   Users,
   Fuel,
   Armchair,
-  Sun,
-  Monitor,
-  Camera,
   ShieldCheck,
-  KeyRound,
   BriefcaseBusiness,
   MessageCircle,
   Check,
@@ -23,7 +19,6 @@ import {
   Route,
   Clock,
   Plug,
-  Ruler,
   FileCheck,
   Wrench,
   MapPin,
@@ -313,9 +308,13 @@ function VehicleDetails() {
     { label: "Versión", value: vehicle.version, icon: Wrench },
     { label: "Año", value: vehicle.year, icon: CalendarDays },
     { label: "Carrocería", value: vehicle.body_type, icon: BriefcaseBusiness },
-    { label: "Kilometraje", value: vehicle.mileage !== null
-      ? `${Number(vehicle.mileage).toLocaleString("es-ES")} ${vehicle.mileage_unit || "km"}`
-      : null, icon: Gauge },
+    {
+      label: "Kilometraje",
+      value: vehicle.mileage !== null
+        ? `${Number(vehicle.mileage).toLocaleString("es-ES")} ${vehicle.mileage_unit || "km"}`
+        : null,
+      icon: Gauge,
+    },
     { label: "Transmisión", value: vehicle.transmission, icon: Cog },
     { label: "Tracción", value: vehicle.drive_type, icon: Route },
   ])
