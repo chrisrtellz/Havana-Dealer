@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Mail, LockKeyhole, Eye, EyeOff, Car } from "lucide-react"
@@ -41,15 +40,18 @@ function Login() {
         .eq("id", data.user.id)
         .maybeSingle()
 
-      if (profileError || profile?.role !== "admin") {
-        await supabase.auth.signOut()
+      if (profileError) {
         setErrorMessage(
-          "Esta cuenta no tiene acceso al panel de administración."
+          "No se pudo verificar tu perfil. Comprueba la configuración de Supabase."
         )
         return
       }
 
-      navigate("/admin")
+      if (profile?.role === "admin") {
+        navigate("/admin")
+      } else {
+        navigate("/user-panel")
+      }
     } catch {
       setErrorMessage("No se pudo conectar. Inténtalo de nuevo.")
     } finally {
@@ -114,11 +116,7 @@ function Login() {
                 showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
               }
             >
-              {showPassword ? (
-                <EyeOff size={19} />
-              ) : (
-                <Eye size={19} />
-              )}
+              {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
             </button>
           </div>
 
@@ -136,6 +134,10 @@ function Login() {
             {loading ? "Verificando..." : "Entrar"}
           </button>
         </form>
+
+        <p className="login-back">
+          ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
+        </p>
 
         <p className="login-back">
           <Link to="/">← Volver al inicio</Link>

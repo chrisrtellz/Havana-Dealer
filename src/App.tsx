@@ -1,4 +1,3 @@
-
 import { useEffect } from "react"
 import {
   BrowserRouter,
@@ -11,18 +10,26 @@ import Home from "./pages/Home"
 import Inventory from "./pages/Inventory"
 import VehicleDetails from "./pages/VehicleDetails"
 import Login from "./pages/Login"
+import Register from "./pages/Register"
 import Admin from "./pages/Admin"
+import UserPanel from "./pages/UserPanel"
+import Verification from "./pages/Verification"
 import Navbar from "./components/Navbar"
 
 import { supabase } from "./lib/supabase"
 
 function AppContent() {
   const location = useLocation()
+
   const isAdminPage = location.pathname === "/admin"
+  const isUserPanelPage = location.pathname === "/user-panel"
+  const isVerificationPage = location.pathname === "/verification"
 
   return (
     <>
-      {!isAdminPage && <Navbar />}
+      {!isAdminPage &&
+        !isUserPanelPage &&
+        !isVerificationPage && <Navbar />}
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -36,7 +43,16 @@ function AppContent() {
 
         <Route path="/login" element={<Login />} />
 
+        <Route path="/register" element={<Register />} />
+
         <Route path="/admin" element={<Admin />} />
+
+        <Route path="/user-panel" element={<UserPanel />} />
+
+        <Route
+          path="/verification"
+          element={<Verification />}
+        />
       </Routes>
     </>
   )
